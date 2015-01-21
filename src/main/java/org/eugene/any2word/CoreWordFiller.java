@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.bind.JAXBElement;
 
 import org.docx4j.XmlUtils;
 import org.docx4j.customXmlProperties.DatastoreItem;
@@ -16,6 +20,7 @@ import org.docx4j.openpackaging.parts.CustomXmlDataStoragePart;
 import org.docx4j.openpackaging.parts.CustomXmlDataStoragePropertiesPart;
 import org.docx4j.openpackaging.parts.Parts;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
+import org.docx4j.wml.ContentAccessor;
 
 public class CoreWordFiller {
 	private WordprocessingMLPackage wordMLPackage;
@@ -50,6 +55,18 @@ public class CoreWordFiller {
 		System.out.println(XmlUtils.w3CDomNodeToString(customXmlDataStorage.getDocument()));		
 		
 		// Bind ContentControls to data in XML file
+	}
+	
+	public CoreWordFiller(String fileName){
+		try {
+			this.wordMLPackage = getTemplate(fileName);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Docx4JException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -103,5 +120,29 @@ public class CoreWordFiller {
 	public void setWordDocument(WordprocessingMLPackage wordMLPackage) {
 		this.wordMLPackage = wordMLPackage;
 	}
+	
+	private WordprocessingMLPackage getTemplate(String fileName) throws FileNotFoundException, Docx4JException {
+		WordprocessingMLPackage template = WordprocessingMLPackage.load(new FileInputStream(new File(fileName)));
+		return template;
+	}
 
+	private static List<Object> getAllElementFromObject(Object obj,
+			Class<?> toSearch) {
+		List<Object> result = new ArrayList<Object>();
+		if (obj instanceof JAXBElement)
+			obj = ((JAXBElement<?>) obj).getValue();
+
+		if (obj.getClass().equals(toSearch))
+			result.add(obj);
+		else if (obj instanceof ContentAccessor) {
+			List<?> children = ((ContentAccessor) obj).getContent();
+			for (Object child : children) {
+				result.addAll(getAllElementFromObject(child, toSearch));
+			}
+
+		}
+		return result;
+	}
+
+	
 }

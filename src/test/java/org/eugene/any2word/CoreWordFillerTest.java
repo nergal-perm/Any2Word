@@ -57,4 +57,5 @@ public class CoreWordFillerTest {
 		System.out.print(itemId);
 		assertNotEquals("Item ID is empty", "", itemId);
 	}
+	
 }
