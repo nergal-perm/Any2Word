@@ -27,7 +27,6 @@ public class CoreWordFillerTest {
 			wordDoc = WordprocessingMLPackage.load(docxFile);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace(System.out);
 		}
 	}
@@ -38,7 +37,6 @@ public class CoreWordFillerTest {
 		try {
 			target = new CoreWordFiller(wordDoc, xmlFile);
 		} catch (FileNotFoundException | Docx4JException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		assertNotNull(target.getWordDocument().getCustomXmlDataStorageParts());
